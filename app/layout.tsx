@@ -5,6 +5,7 @@ import GrainOverlay from "@/components/GrainOverlay";
 import PromoBar, { PromoBarFallback } from "@/components/PromoBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { CartProvider } from "@/components/CartProvider";
 import "./globals.css";
 
 const blackletter = UnifrakturCook({
@@ -49,15 +50,17 @@ export default function RootLayout({
       className={`${blackletter.variable} ${display.variable} ${mono.variable}`}
     >
       <body className="min-h-full antialiased">
-        <GrainOverlay />
-        <div className="flex min-h-screen flex-col">
-          <Suspense fallback={<PromoBarFallback />}>
-            <PromoBar />
-          </Suspense>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </div>
+          <CartProvider>
+            <GrainOverlay />
+            <div className="flex min-h-screen flex-col">
+              <Suspense fallback={<PromoBarFallback />}>
+                <PromoBar />
+              </Suspense>
+              <Header />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
+          </CartProvider>
       </body>
     </html>
   );

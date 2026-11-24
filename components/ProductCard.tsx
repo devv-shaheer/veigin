@@ -13,7 +13,7 @@ type Props = {
 const STAGGER = 0.03;
 
 function isRealUrl(url: string): boolean {
-  return /^https?:\/\//i.test(url);
+  return /^https?:\/\//i.test(url) || url.startsWith("/");
 }
 
 function MediaFrame({ media, name }: { media: ProductMedia[]; name: string }) {
@@ -75,6 +75,7 @@ export default function ProductCard({ product, index }: Props) {
   return (
     <motion.article
       className="group relative"
+      suppressHydrationWarning
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
       onFocus={() => setHovered(true)}

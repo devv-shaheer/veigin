@@ -2,7 +2,8 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import Logo from "@/components/Logo";
 import MobileMenu from "@/components/MobileMenu";
-import { IconBag, IconSearch, IconUser } from "@/components/icons";
+import { IconSearch, IconUser } from "@/components/icons";
+import CartBadge from "@/components/CartBadge";
 import { primaryNav, secondaryNav, utilityNav } from "@/lib/nav";
 import type { NavLink } from "@/lib/nav";
 
@@ -83,9 +84,7 @@ export default function Header() {
             <IconButton href="/account" label="Account">
               <IconUser />
             </IconButton>
-            <IconButton href="/cart" label="Cart">
-              <IconBag />
-            </IconButton>
+            <CartBadge />
           </div>
         </div>
       </div>
