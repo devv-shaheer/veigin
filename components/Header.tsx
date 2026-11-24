@@ -10,7 +10,7 @@ function NavItem({ label, href, accent }: NavLink) {
   return (
     <Link
       href={href}
-      className={`font-mono text-[11px] uppercase tracking-[0.14em] whitespace-nowrap ${
+      className={`font-mono text-[11px] uppercase tracking-[0.06em] whitespace-nowrap ${
         accent ? "text-crimson" : "text-bone"
       }`}
     >
@@ -32,7 +32,7 @@ function IconButton({
     <Link
       href={href}
       aria-label={label}
-      className="flex size-9 items-center justify-center text-bone"
+      className="flex size-7 items-center justify-center text-bone xl:size-8"
     >
       {children}
     </Link>
@@ -42,10 +42,10 @@ function IconButton({
 export default function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-silver/15 bg-page">
-      <div className="mx-auto hidden h-16 max-w-[1400px] grid-cols-[1fr_auto_1fr] items-center gap-6 px-4 lg:grid">
+      <div className="mx-auto hidden h-16 max-w-[1400px] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 px-4 lg:grid xl:gap-4">
         <nav
           aria-label="Primary"
-          className="flex items-center gap-5 justify-self-start"
+          className="flex items-center gap-3 justify-self-start"
         >
           {primaryNav.map((link) => (
             <NavItem key={link.href} {...link} />
@@ -57,24 +57,19 @@ export default function Header() {
           aria-label="Veigin home"
           className="justify-self-center"
         >
-          <Logo className="h-8 w-auto" priority />
+          <Logo className="h-7 w-auto xl:h-8" priority />
         </Link>
 
-        <div className="flex items-center gap-4 justify-self-end">
-          <nav
-            aria-label="Collections"
-            className="flex items-center gap-5"
-          >
+        <div className="flex items-center gap-3 justify-self-end xl:gap-4">
+          <nav aria-label="Collections" className="flex items-center gap-3">
             {secondaryNav.map((link) => (
               <NavItem key={link.href} {...link} />
             ))}
           </nav>
 
-          <span aria-hidden="true" className="h-4 w-px bg-silver/25" />
-
           <nav
             aria-label="Account and help"
-            className="hidden items-center gap-4 xl:flex"
+            className="hidden items-center gap-3 2xl:flex"
           >
             {utilityNav.map((link) => (
               <NavItem key={link.href} {...link} />

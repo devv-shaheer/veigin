@@ -21,6 +21,16 @@ const pool: Pool = createPool({
   dateStrings: true,
 });
 
+// If MySQL is unreachable the pool emits an 'error' event. Swallow it here so
+// queries reject to the caller (and callers fall back to defaults) instead of
+// crashing the process. The promise Pool type omits the 'error' overload, so
+// call through a minimal EventEmitter-shaped cast.
+(
+  pool as unknown as {
+    on(event: "error", listener: (err: Error) => void): unknown;
+  }
+).on("error", () => {});
+
 export async function query<T = RowDataPacket>(
   sql: string,
   params: QueryParam[] = [],
