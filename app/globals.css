@@ -1,26 +1,60 @@
 @import "tailwindcss";
 
+/* Veigin design tokens. Raw values live in :root so the base layer can use
+   them directly; @theme inline maps them to Tailwind utilities (bg-page,
+   text-bone, font-blackletter, ...). */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --page: #222220;
+  --panel: #171715;
+  --bone: #d9d6cf;
+  --silver: #a9adb1;
+  --crimson: #b3122b;
+  --crimson-bright: #e0314b;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-page: var(--page);
+  --color-panel: var(--panel);
+  --color-bone: var(--bone);
+  --color-silver: var(--silver);
+  --color-crimson: var(--crimson);
+  --color-crimson-bright: var(--crimson-bright);
+
+  --font-blackletter: var(--font-unifraktur), "UnifrakturCook", serif;
+  --font-display: var(--font-anton), "Anton", sans-serif;
+  --font-mono: var(--font-plex-mono), "IBM Plex Mono", ui-monospace, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html {
+    background-color: var(--page);
+  }
+
+  body {
+    background-color: var(--page);
+    color: var(--bone);
+    font-family: var(--font-plex-mono), "IBM Plex Mono", ui-monospace, monospace;
+  }
+
+  :focus-visible {
+    outline: 1px solid var(--crimson);
+    outline-offset: 2px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Fixed film-grain texture laid over the whole page. Static decoration only,
+   never intercepts pointer events. */
+.grain-overlay {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
