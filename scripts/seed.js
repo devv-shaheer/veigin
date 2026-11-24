@@ -44,6 +44,10 @@ const products = [
     scatter_x: 24,
     scatter_y: 12,
     rotation: -6,
+    show_on_home: 1,
+    home_x: 16,
+    home_y: 13,
+    home_rot: -6,
   },
   {
     name: "SAMPLE - Thorn Band Ring",
@@ -62,6 +66,10 @@ const products = [
     scatter_x: 76,
     scatter_y: 18,
     rotation: 5,
+    show_on_home: 1,
+    home_x: 63,
+    home_y: 20,
+    home_rot: 5,
   },
   {
     name: "SAMPLE - Oath Chain Bracelet",
@@ -79,6 +87,10 @@ const products = [
     scatter_x: 20,
     scatter_y: 38,
     rotation: 4,
+    show_on_home: 1,
+    home_x: 26,
+    home_y: 37,
+    home_rot: 4,
   },
   {
     name: "SAMPLE - Widow's Web Bracelet",
@@ -97,6 +109,10 @@ const products = [
     scatter_x: 80,
     scatter_y: 44,
     rotation: -5,
+    show_on_home: 1,
+    home_x: 74,
+    home_y: 44,
+    home_rot: -5,
   },
   {
     name: "SAMPLE - Reliquary Pendant",
@@ -115,6 +131,10 @@ const products = [
     scatter_x: 26,
     scatter_y: 64,
     rotation: -4,
+    show_on_home: 1,
+    home_x: 12,
+    home_y: 61,
+    home_rot: -4,
   },
   {
     name: "SAMPLE - Hollow Cross Necklace",
@@ -133,6 +153,10 @@ const products = [
     scatter_x: 74,
     scatter_y: 70,
     rotation: 6,
+    show_on_home: 1,
+    home_x: 60,
+    home_y: 66,
+    home_rot: 6,
   },
   {
     name: "SAMPLE - Grave Dirt Ring",
@@ -150,6 +174,10 @@ const products = [
     scatter_x: 30,
     scatter_y: 88,
     rotation: 3,
+    show_on_home: 1,
+    home_x: 24,
+    home_y: 85,
+    home_rot: 3,
   },
   {
     name: "SAMPLE - Mourning Chain Necklace",
@@ -167,6 +195,10 @@ const products = [
     scatter_x: 70,
     scatter_y: 92,
     rotation: -7,
+    show_on_home: 1,
+    home_x: 71,
+    home_y: 86,
+    home_rot: -7,
   },
 ];
 
@@ -215,8 +247,9 @@ async function seed(conn) {
         "INSERT INTO products (" +
           "name, slug, description, price, compare_at_price, category_id, drop_id, " +
           "stock, availability, restockable, is_best_seller, is_new_drop, is_exclusive, " +
-          "material, length_label, build_details, media, scatter_x, scatter_y, rotation" +
-          ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+          "material, length_label, build_details, media, scatter_x, scatter_y, rotation, " +
+          "show_on_home, home_x, home_y, home_rot" +
+          ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
           "ON DUPLICATE KEY UPDATE " +
           "name = VALUES(name), price = VALUES(price), compare_at_price = VALUES(compare_at_price), " +
           "category_id = VALUES(category_id), drop_id = VALUES(drop_id), stock = VALUES(stock), " +
@@ -225,7 +258,8 @@ async function seed(conn) {
           "is_exclusive = VALUES(is_exclusive), material = VALUES(material), " +
           "length_label = VALUES(length_label), build_details = VALUES(build_details), " +
           "media = VALUES(media), scatter_x = VALUES(scatter_x), scatter_y = VALUES(scatter_y), " +
-          "rotation = VALUES(rotation)",
+          "rotation = VALUES(rotation), show_on_home = VALUES(show_on_home), " +
+          "home_x = VALUES(home_x), home_y = VALUES(home_y), home_rot = VALUES(home_rot)",
         [
           p.name,
           p.slug,
@@ -247,6 +281,10 @@ async function seed(conn) {
           p.scatter_x,
           p.scatter_y,
           p.rotation,
+          p.show_on_home,
+          p.home_x,
+          p.home_y,
+          p.home_rot,
         ],
       );
     }
