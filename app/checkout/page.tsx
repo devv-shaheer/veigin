@@ -61,7 +61,7 @@ export default function CheckoutPage() {
   if (items.length === 0) {
     return (
       <main className="mx-auto w-full max-w-[1400px] px-4 py-10">
-        <h1 className="font-blackletter text-4xl text-bone sm:text-5xl">Checkout</h1>
+<h1 className="font-display text-4xl text-bone sm:text-5xl">Checkout</h1>
         <p className="mt-6 font-mono text-sm text-silver">Your cart is empty.</p>
       </main>
     );
@@ -69,7 +69,7 @@ export default function CheckoutPage() {
 
   return (
     <main className="mx-auto w-full max-w-[1400px] px-4 py-10">
-      <h1 className="font-blackletter text-4xl text-bone sm:text-5xl">Checkout</h1>
+      <h1 className="font-display text-4xl text-bone sm:text-5xl">Checkout</h1>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_360px]">
         <form onSubmit={onSubmit} className="space-y-4">
@@ -160,24 +160,24 @@ export default function CheckoutPage() {
           </h2>
           <ul className="mt-4 space-y-2">
             {items.map((i) => (
-              <li key={i.productId} className="flex justify-between font-mono text-xs text-bone">
+              <li key={i.productId} className="flex justify-between font-name-face text-xs text-bone">
                 <span>
                   {i.name} × {i.quantity}
                 </span>
-                <span>PKR {(i.price * i.quantity).toLocaleString("en-PK")}</span>
+                <span className="font-price">PKR {(i.price * i.quantity).toLocaleString("en-PK")}</span>
               </li>
             ))}
           </ul>
           <div className="mt-4 space-y-2 border-t border-silver/15 pt-4 font-mono text-sm">
             <div className="flex justify-between text-bone">
               <span>Subtotal</span>
-              <span>PKR {subtotal.toLocaleString("en-PK")}</span>
+              <span className="font-price">PKR {subtotal.toLocaleString("en-PK")}</span>
             </div>
             <div className="flex justify-between text-bone">
               <span>Delivery (2-5 working days)</span>
-              <span>PKR {deliveryFee.toLocaleString("en-PK")}</span>
+              <span className="font-price">PKR {deliveryFee.toLocaleString("en-PK")}</span>
             </div>
-            <div className="flex justify-between border-t border-silver/15 pt-2 font-display text-base text-crimson-bright">
+            <div className="flex justify-between border-t border-silver/15 pt-2 font-price text-base text-crimson-bright">
               <span>Total</span>
               <span>PKR {(subtotal + deliveryFee).toLocaleString("en-PK")}</span>
             </div>

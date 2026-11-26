@@ -74,12 +74,12 @@ export default function ProductDetail({ product }: { product: Product }) {
 
         {/* Info */}
         <div>
-          <h1 className="font-blackletter text-5xl leading-tight text-bone sm:text-6xl">
+          <h1 className="font-display font-light text-5xl leading-tight text-foreground sm:text-6xl">
             {product.name}
           </h1>
 
           <div className="mt-4 flex items-baseline gap-4">
-            <span className="font-display text-3xl text-crimson-bright">
+            <span className="font-price font-poppins text-3xl text-crimson-bright">
               PKR {product.price.toLocaleString("en-PK")}
             </span>
             {product.compareAtPrice != null && product.compareAtPrice > product.price && (
@@ -89,13 +89,13 @@ export default function ProductDetail({ product }: { product: Product }) {
             )}
           </div>
 
-          <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.18em] text-silver">
+          <p className="mt-2 font-poppins text-[11px] uppercase tracking-[0.18em] text-muted">
             Status: {statusLabel}
             {product.categoryName ? ` · ${product.categoryName}` : ""}
           </p>
 
           {product.description && (
-            <p className="mt-6 font-mono text-sm leading-relaxed text-bone/80">
+            <p className="mt-6 font-poppins text-sm leading-relaxed text-bone/80">
               {product.description}
             </p>
           )}
@@ -103,26 +103,26 @@ export default function ProductDetail({ product }: { product: Product }) {
           {/* Specifications */}
           <div className="mt-6 space-y-2 border-t border-silver/15 pt-6">
             {product.material && (
-              <div className="flex justify-between font-mono text-xs">
-                <span className="text-silver">Material</span>
-                <span className="text-bone">{product.material}</span>
+              <div className="flex justify-between font-poppins text-xs">
+                <span className="text-muted">Material</span>
+                <span className="text-foreground">{product.material}</span>
               </div>
             )}
             {product.lengthLabel && (
-              <div className="flex justify-between font-mono text-xs">
-                <span className="text-silver">Length</span>
-                <span className="text-bone">{product.lengthLabel}</span>
+              <div className="flex justify-between font-poppins text-xs">
+                <span className="text-muted">Length</span>
+                <span className="text-foreground">{product.lengthLabel}</span>
               </div>
             )}
             {product.buildDetails && (
-              <div className="flex justify-between font-mono text-xs">
-                <span className="text-silver">Build</span>
-                <span className="text-bone">{product.buildDetails}</span>
+              <div className="flex justify-between font-poppins text-xs">
+                <span className="text-muted">Build</span>
+                <span className="text-foreground">{product.buildDetails}</span>
               </div>
             )}
-            <div className="flex justify-between font-mono text-xs">
-              <span className="text-silver">Stock</span>
-              <span className="text-bone">{stockDisplay}</span>
+            <div className="flex justify-between font-poppins text-xs">
+              <span className="text-muted">Stock</span>
+              <span className="text-foreground">{stockDisplay}</span>
             </div>
           </div>
 

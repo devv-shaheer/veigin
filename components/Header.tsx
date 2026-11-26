@@ -11,9 +11,9 @@ function NavItem({ label, href, accent }: NavLink) {
   return (
     <Link
       href={href}
-      className={`font-mono text-[11px] uppercase tracking-[0.06em] whitespace-nowrap ${
-        accent ? "text-crimson" : "text-bone"
-      }`}
+      className={`font-poppins text-[12px] font-normal uppercase tracking-[0.14em] whitespace-nowrap ${
+  accent ? "text-accent" : "text-foreground"
+} transition-colors hover:text-accent`}
     >
       {label}
     </Link>
@@ -33,7 +33,7 @@ function IconButton({
     <Link
       href={href}
       aria-label={label}
-      className="flex size-7 items-center justify-center text-bone xl:size-8"
+      className="flex size-7 items-center justify-center text-foreground xl:size-8 transition-colors hover:text-accent"
     >
       {children}
     </Link>
@@ -42,7 +42,7 @@ function IconButton({
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-40 border-b border-silver/15 bg-page">
+    <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-sm">
       <div className="mx-auto hidden h-16 max-w-[1400px] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 px-4 lg:grid xl:gap-4">
         <nav
           aria-label="Primary"

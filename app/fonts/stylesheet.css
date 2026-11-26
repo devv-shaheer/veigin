@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'Shadow of Xizor';
+    src: url('ShadowofXizor.woff2') format('woff2'),
+        url('ShadowofXizor.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+

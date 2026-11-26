@@ -14,7 +14,7 @@
 
 const FIELD_WIDTH = 1000;
 const FIELD_HEIGHT = 1250;
-const CARD_WIDTH_PCT = 15;
+const CARD_WIDTH_PCT = 24;
 const CARD_ASPECT = 3 / 4;
 const DISPLACE_MIN = 120;
 const DISPLACE_MAX = 300;
@@ -94,15 +94,17 @@ function overlap(a, b) {
 }
 
 // --- mirrored from scripts/seed.js (id, name, home_x, home_y, home_rot) ------
+// 6 products with show_on_home = 1
+// Positions for CARD_WIDTH_PCT=20 (card ~20% x 26.7% of field)
+// Tighter two-column layout: left column x~22%, right column x~68%
+// Vertical: both columns at 14%, 42%, 66% (24-28% gaps > card 267 + GAP 8)
 const products = [
-  { id: 1, name: "Bone Signet Ring", homeX: 16, homeY: 13, homeRot: -6 },
-  { id: 2, name: "Thorn Band Ring", homeX: 63, homeY: 20, homeRot: 5 },
-  { id: 3, name: "Oath Chain Bracelet", homeX: 26, homeY: 37, homeRot: 4 },
-  { id: 4, name: "Widow's Web Bracelet", homeX: 74, homeY: 44, homeRot: -5 },
-  { id: 5, name: "Reliquary Pendant", homeX: 12, homeY: 61, homeRot: -4 },
-  { id: 6, name: "Hollow Cross Necklace", homeX: 60, homeY: 66, homeRot: 6 },
-  { id: 7, name: "Grave Dirt Ring", homeX: 24, homeY: 85, homeRot: 3 },
-  { id: 8, name: "Mourning Chain Necklace", homeX: 71, homeY: 86, homeRot: -7 },
+  { id: 1, name: "Bone Signet Ring", homeX: 22, homeY: 16, homeRot: -6 },
+  { id: 2, name: "Thorn Band Ring", homeX: 68, homeY: 20, homeRot: 5 },
+  { id: 3, name: "Oath Chain Bracelet", homeX: 24, homeY: 43, homeRot: 4 },
+  { id: 4, name: "Widow's Web Bracelet", homeX: 68, homeY: 47, homeRot: -5 },
+  { id: 5, name: "Reliquary Pendant", homeX: 20, homeY: 70, homeRot: -4 },
+  { id: 6, name: "Hollow Cross Necklace", homeX: 66, homeY: 74, homeRot: 6 },
 ];
 
 let failures = 0;

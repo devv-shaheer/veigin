@@ -1,44 +1,32 @@
 import { Suspense } from "react";
-import Link from "next/link";
 import { getHomeProducts } from "@/lib/products";
 import ScatterField from "@/components/ScatterField";
+import ExploreButton from "@/components/ExploreButton";
 
 async function HomeContent() {
   const products = await getHomeProducts();
   return (
-    <main className="mx-auto w-full max-w-[1400px] px-4 py-10">
-      <div className="grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-12">
-        <div>
-          <h1 className="font-blackletter text-5xl leading-tight text-bone sm:text-6xl">
-            Wear <span className="text-crimson-bright">the dark.</span>
-          </h1>
-          <p className="mt-4 font-mono text-sm uppercase tracking-[0.18em] text-silver">
-            Alternative fashion. Reimagined in Pakistan.
-          </p>
-          <Link
-            href="/products"
-            className="mt-8 inline-flex items-center gap-3 border border-bone px-6 py-3 font-display text-sm uppercase tracking-[0.14em] text-bone transition-colors hover:bg-bone hover:text-page focus-visible:bg-bone focus-visible:text-page"
-          >
-            Explore the collection
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={1.5}
-              strokeLinecap="square"
-              aria-hidden="true"
-              className="size-4"
-            >
-              <path d="M5 12h14M13 6l6 6-6 6" />
-            </svg>
-          </Link>
-          {products.length === 0 && (
-            <p className="mt-6 font-mono text-xs text-silver">
-              No products available yet.
+    <main className="mx-auto w-full max-w-[1400px] px-4">
+      <div className="relative min-h-[calc(100vh-4rem)] flex items-center">
+        <div className="grid gap-8 lg:grid-cols-[1fr_55%] lg:items-center lg:gap-12 w-full">
+          <div className="z-10">
+            <h1 className="font-heading font-light text-5xl leading-tight text-foreground sm:text-6xl">
+              WEAR <span className="font-heading text-accent">the dark.</span>
+            </h1>
+            <p className="mt-4 font-display font-medium text-sm uppercase tracking-[0.2em] text-muted">
+              GOTHIC HERO. DARK BY DESIGN.
             </p>
-          )}
+            <ExploreButton />
+            {products.length === 0 && (
+              <p className="mt-6 font-display text-xs text-muted">
+                No products available yet.
+              </p>
+            )}
+          </div>
+          <div className="lg:col-start-2">
+            <ScatterField products={products} />
+          </div>
         </div>
-        <ScatterField products={products} />
       </div>
     </main>
   );
@@ -46,7 +34,7 @@ async function HomeContent() {
 
 export default function Page() {
   return (
-    <Suspense fallback={<div className="mx-auto max-w-[1400px] px-4 py-10" />}>
+    <Suspense fallback={<div className="mx-auto max-w-[1400px] px-4 min-h-[calc(100vh-4rem)] flex items-center" />}>
       <HomeContent />
     </Suspense>
   );

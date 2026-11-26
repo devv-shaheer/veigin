@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { UnifrakturCook, Anton, IBM_Plex_Mono } from "next/font/google";
+import { Poppins, Anton, IBM_Plex_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import GrainOverlay from "@/components/GrainOverlay";
 import PromoBar, { PromoBarFallback } from "@/components/PromoBar";
 import Header from "@/components/Header";
@@ -8,26 +9,31 @@ import Footer from "@/components/Footer";
 import { CartProvider } from "@/components/CartProvider";
 import "./globals.css";
 
-const blackletter = UnifrakturCook({
-  weight: "700",
+const poppins = Poppins({
+  weight: ["300", "400", "500", "600", "700"],
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-unifraktur",
+  variable: "--font-poppins",
 });
 
-const display = Anton({
+const anton = Anton({
   weight: "400",
   subsets: ["latin"],
   display: "swap",
   variable: "--font-anton",
 });
 
-const mono = IBM_Plex_Mono({
+const plexMono = IBM_Plex_Mono({
   weight: ["400", "500", "600"],
   subsets: ["latin"],
   display: "swap",
   variable: "--font-plex-mono",
 });
+const xizor = localFont({
+  src: "./fonts/ShadowofXizor.woff2",
+  variable: "--font-xizor",
+  display: "swap",
+}); 
 
 export const metadata: Metadata = {
   title: {
@@ -47,20 +53,21 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${blackletter.variable} ${display.variable} ${mono.variable}`}
+      className={`${poppins.variable} ${anton.variable} ${plexMono.variable} ${xizor.variable}`}
+      suppressHydrationWarning
     >
       <body className="min-h-full antialiased">
-          <CartProvider>
-            <GrainOverlay />
-            <div className="flex min-h-screen flex-col">
-              <Suspense fallback={<PromoBarFallback />}>
-                <PromoBar />
-              </Suspense>
-              <Header />
-              <main className="flex-1">{children}</main>
-              <Footer />
-            </div>
-          </CartProvider>
+        <CartProvider>
+          <GrainOverlay />
+          <div className="flex min-h-screen flex-col">
+            <Suspense fallback={<PromoBarFallback />}>
+              <PromoBar />
+            </Suspense>
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </div>
+        </CartProvider>
       </body>
     </html>
   );

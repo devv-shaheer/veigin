@@ -17,7 +17,7 @@ function MenuLink({
     <Link
       href={href}
       onClick={onNavigate}
-      className={`block py-2 font-mono text-sm uppercase tracking-[0.14em] ${
+      className={`block py-2 font-poppins text-sm uppercase tracking-[0.14em] ${
         accent ? "text-crimson" : "text-bone"
       }`}
     >

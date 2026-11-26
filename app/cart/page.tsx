@@ -9,7 +9,7 @@ export default function CartPage() {
 
   return (
     <main className="mx-auto w-full max-w-[1400px] px-4 py-10">
-      <h1 className="font-blackletter text-4xl text-bone sm:text-5xl">Cart</h1>
+      <h1 className="font-display text-4xl text-bone sm:text-5xl">Cart</h1>
 
       {items.length === 0 ? (
         <div className="mt-8">
@@ -32,11 +32,11 @@ export default function CartPage() {
                 <div className="flex-1">
                   <Link
                     href={`/products/${i.slug}`}
-                    className="font-blackletter text-xl text-bone hover:text-crimson-bright"
+                    className="font-name-face text-lg text-bone hover:text-crimson-bright"
                   >
                     {i.name}
                   </Link>
-                  <p className="font-display text-sm text-crimson-bright">
+                  <p className="font-price text-sm text-crimson-bright">
                     PKR {i.price.toLocaleString("en-PK")}
                   </p>
                 </div>
@@ -77,13 +77,13 @@ export default function CartPage() {
             <div className="mt-4 space-y-2 font-mono text-sm">
               <div className="flex justify-between text-bone">
                 <span>Subtotal</span>
-                <span>PKR {subtotal.toLocaleString("en-PK")}</span>
+                <span className="font-price">PKR {subtotal.toLocaleString("en-PK")}</span>
               </div>
               <div className="flex justify-between text-bone">
                 <span>Delivery</span>
-                <span>PKR {deliveryFee.toLocaleString("en-PK")}</span>
+                <span className="font-price">PKR {deliveryFee.toLocaleString("en-PK")}</span>
               </div>
-              <div className="flex justify-between border-t border-silver/15 pt-2 font-display text-base text-crimson-bright">
+              <div className="flex justify-between border-t border-silver/15 pt-2 font-price text-base text-crimson-bright">
                 <span>Total</span>
                 <span>PKR {(subtotal + deliveryFee).toLocaleString("en-PK")}</span>
               </div>

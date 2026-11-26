@@ -8,12 +8,13 @@
 
 // The field is an art-directed portrait canvas. Positions are stored as
 // percentages of this field so they scale with the rendered size.
+// FIELD_WIDTH/HEIGHT define the abstract coordinate system (1000x1250 = 4:5 aspect).
 export const FIELD_WIDTH = 1000;
 export const FIELD_HEIGHT = 1250;
 export const FIELD_ASPECT = FIELD_WIDTH / FIELD_HEIGHT; // width / height (0.8)
 
-// Each product card is 15% of the field width, portrait 3:4.
-export const CARD_WIDTH_PCT = 15;
+// Each product card is 20% of the field width (abstract), portrait 3:4.
+export const CARD_WIDTH_PCT = 24;
 export const CARD_ASPECT = 3 / 4; // width / height
 
 // Entrance "throw": cards start this far (in field px) outside their home spot
