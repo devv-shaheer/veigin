@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { Poppins, Anton, IBM_Plex_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import GrainOverlay from "@/components/GrainOverlay";
+import BackgroundLights from "@/components/BackgroundLights";
 import PromoBar, { PromoBarFallback } from "@/components/PromoBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -56,10 +57,11 @@ export default function RootLayout({
       className={`${poppins.variable} ${anton.variable} ${plexMono.variable} ${xizor.variable}`}
       suppressHydrationWarning
     >
-      <body className="min-h-full antialiased">
+      <body className="min-h-full antialiased isolate">
         <CartProvider>
           <GrainOverlay />
-          <div className="flex min-h-screen flex-col">
+          <BackgroundLights />
+          <div className="relative z-[1] flex min-h-screen flex-col">
             <Suspense fallback={<PromoBarFallback />}>
               <PromoBar />
             </Suspense>
