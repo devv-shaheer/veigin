@@ -175,7 +175,7 @@ export default function ScatterField({ products }: Props) {
   const reduced = !!useReducedMotion();
   const [isOrganized, setIsOrganized] = useState(false);
   const [entered, setEntered] = useState(false);
-  const [isTouch, setIsTouch] = useState(false);
+  const isTouch = typeof window !== "undefined" && window.matchMedia("(hover: none)").matches;
   const defaultWidth = 770;
   const [containerSize, setContainerSize] = useState({
     width: defaultWidth,
@@ -183,10 +183,6 @@ export default function ScatterField({ products }: Props) {
   });
   const containerRef = useRef<HTMLDivElement>(null);
   const entranceTriggeredRef = useRef(false);
-
-  useEffect(() => {
-    setIsTouch(window.matchMedia("(hover: none)").matches);
-  }, []);
 
   useEffect(() => {
     const el = containerRef.current;

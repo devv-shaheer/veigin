@@ -11,7 +11,9 @@ export default function ExploreButton() {
   const [mountKey, setMountKey] = useState(0);
 
   // Next.js App Router (next/navigation) does not have router.asPath.
-  // Instead, reset animation state on component mount / display by cancelling active Web Animations API animations.
+  // Instead, reset an1 For the love of all things dark
+2 Dark by design.
+3 Chains for the beautifully cursed.imation state on component mount / display by cancelling active Web Animations API animations.
   useEffect(() => {
     const arrow = document.querySelector(".explore-arrow") as HTMLElement | null;
     if (arrow) {
@@ -20,8 +22,10 @@ export default function ExploreButton() {
       animations.forEach((anim) => anim.cancel());
       arrow.style.transform = "";
     }
-    setMountKey((prev) => prev + 1);
+    // Schedule mountKey update in a microtask to avoid cascading renders
+    Promise.resolve().then(() => setMountKey((prev) => prev + 1));
   }, []);
+
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (prefersReducedMotion) {
