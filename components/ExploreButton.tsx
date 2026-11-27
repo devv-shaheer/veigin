@@ -1,12 +1,27 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function ExploreButton() {
   const router = useRouter();
   const prefersReducedMotion = useReducedMotion();
+  const [mountKey, setMountKey] = useState(0);
+
+  // Next.js App Router (next/navigation) does not have router.asPath.
+  // Instead, reset animation state on component mount / display by cancelling active Web Animations API animations.
+  useEffect(() => {
+    const arrow = document.querySelector(".explore-arrow") as HTMLElement | null;
+    if (arrow) {
+      // Cancel any running Web Animations API animation and clear fill: "forwards" inline styles
+      const animations = arrow.getAnimations();
+      animations.forEach((anim) => anim.cancel());
+      arrow.style.transform = "";
+    }
+    setMountKey((prev) => prev + 1);
+  }, []);
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (prefersReducedMotion) {
@@ -62,6 +77,7 @@ export default function ExploreButton() {
     >
       Explore the collection
       <motion.svg
+        key={mountKey}
         className="explore-arrow size-4 shrink-0 transition-transform duration-300 ease-out group-hover:translate-x-1 group-focus-visible:translate-x-1"
         viewBox="0 0 24 24"
         fill="none"
