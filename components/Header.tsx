@@ -11,7 +11,7 @@ function NavItem({ label, href, accent }: NavLink) {
   return (
     <Link
       href={href}
-      className={`font-poppins text-[12px] font-normal uppercase tracking-[0.14em] whitespace-nowrap ${
+      className={`font-poppins text-[12px] font-normal uppercase tracking-[0.04em] whitespace-nowrap ${
   accent ? "text-accent" : "text-foreground"
 } transition-colors hover:text-accent`}
     >
@@ -43,10 +43,10 @@ function IconButton({
 export default function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-sm">
-      <div className="mx-auto hidden h-16 max-w-[1400px] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 px-4 lg:grid xl:gap-4">
+      <div className="mx-auto hidden h-16 max-w-[1400px] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 px-4 lg:grid xl:gap-2">
         <nav
           aria-label="Primary"
-          className="flex items-center gap-3 justify-self-start"
+          className="flex items-center gap-2 justify-self-start"
         >
           {primaryNav.map((link) => (
             <NavItem key={link.href} {...link} />
@@ -61,8 +61,11 @@ export default function Header() {
           <Logo className="h-7 w-auto xl:h-8" priority />
         </Link>
 
-        <div className="flex items-center gap-3 justify-self-end xl:gap-4">
-          <nav aria-label="Collections" className="flex items-center gap-3">
+        <div className="flex items-center gap-2 justify-self-end xl:gap-3">
+          <nav
+            aria-label="Collections"
+            className="flex items-center gap-2"
+          >
             {secondaryNav.map((link) => (
               <NavItem key={link.href} {...link} />
             ))}
@@ -70,7 +73,7 @@ export default function Header() {
 
           <nav
             aria-label="Account and help"
-            className="hidden items-center gap-3 2xl:flex"
+            className="hidden items-center gap-2 2xl:flex"
           >
             {utilityNav.map((link) => (
               <NavItem key={link.href} {...link} />
