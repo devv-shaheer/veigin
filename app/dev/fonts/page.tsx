@@ -69,7 +69,7 @@ export default function DevFontsPage() {
       <body className="min-h-screen bg-page text-bone p-10 font-mono">
         <div className="mx-auto max-w-[1400px]">
           <header className="mb-12">
-            <h1 className="font-display text-4xl text-bone mb-2">Font Development Test Page</h1>
+            <h1 className="font-heading text-4xl text-bone mb-2">Font Development Test Page</h1>
             <p className="text-silver text-sm">Background: #222220 | Text: #d9d6cf | Temporary route: /dev/fonts</p>
           </header>
 

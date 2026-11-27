@@ -10,7 +10,7 @@ async function HomeContent() {
       <div className="relative min-h-[calc(100vh-4rem)] flex items-center">
         <div className="grid gap-8 lg:grid-cols-[1fr_55%] lg:items-center lg:gap-12 w-full">
           <div className="z-10">
-            <h1 className="font-heading font-light text-5xl leading-tight text-foreground sm:text-6xl">
+            <h1 className="font-heading text-5xl leading-tight text-foreground sm:text-6xl">
               WEAR <span className="font-heading text-accent">the dark.</span>
             </h1>
             <p className="mt-4 font-display font-medium text-sm uppercase tracking-[0.2em] text-muted">
