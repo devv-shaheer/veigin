@@ -61,7 +61,7 @@ export default function CheckoutPage() {
   if (items.length === 0) {
     return (
       <main className="mx-auto w-full max-w-[1400px] px-4 py-10">
-<h1 className="font-heading text-4xl sm:text-5xl">Checkout</h1>
+<h1 className="font-heading text-5xl tracking-[0.03em] sm:text-6xl">Checkout<span className="text-accent" aria-hidden="true">.</span></h1>
         <p className="mt-6 font-mono text-sm text-silver">Your cart is empty.</p>
       </main>
     );
@@ -69,7 +69,7 @@ export default function CheckoutPage() {
 
   return (
     <main className="mx-auto w-full max-w-[1400px] px-4 py-10">
-      <h1 className="font-heading text-4xl sm:text-5xl">Checkout</h1>
+      <h1 className="font-heading text-5xl tracking-[0.03em] sm:text-6xl">Checkout<span className="text-accent" aria-hidden="true">.</span></h1>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_360px]">
         <form onSubmit={onSubmit} className="space-y-4">
