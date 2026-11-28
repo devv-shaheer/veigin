@@ -24,7 +24,7 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { href: "/admin", label: "Overview", icon: IconSearch },
+  { href: "/vg-7x2k", label: "Overview", icon: IconSearch },
   { href: "/admin/products", label: "Products", icon: IconBag },
   { href: "/admin/inventory", label: "Inventory", icon: IconBag },
   { href: "/admin/orders", label: "Orders", icon: IconUser },
@@ -86,7 +86,7 @@ export default function AdminShell({
               return (
                 <Link
                   key={item.href}
-                  href={item.href}
+                  href={item.href.replace("/admin", "/vg-7x2k")}
                   className={`admin-shell__nav-item ${
                     isActive ? "admin-shell__nav-item--active" : ""
                   }`}
@@ -106,7 +106,7 @@ export default function AdminShell({
               return (
                 <Link
                   key={item.href}
-                  href={item.href}
+                  href={item.href.replace("/admin", "/vg-7x2k")}
                   className={`admin-shell__nav-item ${
                     isActive ? "admin-shell__nav-item--active" : ""
                   }`}
