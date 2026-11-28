@@ -8,12 +8,16 @@ import { primaryNav, secondaryNav, utilityNav } from "@/lib/nav";
 import type { NavLink } from "@/lib/nav";
 
 function NavItem({ label, href, accent }: NavLink) {
+  const isTrackOrder = label.toLowerCase() === "track order";
+
   return (
     <Link
       href={href}
-      className={`font-poppins text-[12px] font-normal uppercase tracking-[0.04em] whitespace-nowrap ${
-  accent ? "text-accent" : "text-foreground"
-} transition-colors hover:text-accent`}
+      className={`font-poppins text-[12px] font-normal uppercase tracking-[0.04em] whitespace-nowrap transition-colors ${
+        isTrackOrder
+          ? "rounded-full bg-accent px-2 py-1 text-white hover:bg-accent/80 hover:text-white"
+          : `${accent ? "text-accent" : "text-foreground"} hover:text-accent`
+      }`}
     >
       {label}
     </Link>
@@ -61,7 +65,7 @@ export default function Header() {
           <Logo className="h-7 w-auto xl:h-8" priority />
         </Link>
 
-        <div className="flex items-center gap-2 justify-self-end xl:gap-3">
+        <div className="flex items-center gap-2 justify-self-end xl:gap-3 xl:translate-x-3">
           <nav
             aria-label="Collections"
             className="flex items-center gap-2"

@@ -3,7 +3,8 @@ export default function Logo() {
     <img
       src="/brand/veiginlogo.png"
       alt="VEIGIN"
-      className="h-9 md:h-18 w-auto object-contain brightness-0 invert"
+      className="h-10 md:h-9.5 w-auto object-contain brightness-0 invert"
+      draggable={false}
     />
   );
 }
