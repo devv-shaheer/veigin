@@ -26,48 +26,12 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { href: "/admin", label: "Overview", icon: IconSearch },
   { href: "/admin/products", label: "Products", icon: IconBag },
-  {
-    href: "#",
-    label: "Inventory",
-    icon: IconBag,
-    disabled: true,
-    comingSoon: true,
-  },
-  {
-    href: "#",
-    label: "Orders",
-    icon: IconUser,
-    disabled: true,
-    comingSoon: true,
-  },
-  {
-    href: "#",
-    label: "Customers",
-    icon: IconUser,
-    disabled: true,
-    comingSoon: true,
-  },
-  {
-    href: "#",
-    label: "Discounts",
-    icon: IconSearch,
-    disabled: true,
-    comingSoon: true,
-  },
-  {
-    href: "#",
-    label: "Storefront",
-    icon: IconSearch,
-    disabled: true,
-    comingSoon: true,
-  },
-  {
-    href: "#",
-    label: "Settings",
-    icon: IconMenu,
-    disabled: true,
-    comingSoon: true,
-  },
+  { href: "/admin/inventory", label: "Inventory", icon: IconBag },
+  { href: "/admin/orders", label: "Orders", icon: IconUser },
+  { href: "/admin/customers", label: "Customers", icon: IconUser },
+  { href: "/admin/discounts", label: "Discounts", icon: IconSearch },
+  { href: "/admin/storefront", label: "Storefront", icon: IconSearch },
+  { href: "/admin/settings", label: "Settings", icon: IconMenu },
 ];
 
 interface AdminShellProps {
@@ -105,26 +69,11 @@ export default function AdminShell({
         {/* Brand */}
         <div className="admin-shell__sidebar-brand">
           <Link href="/admin" className="block" aria-label="VEIGIN Admin Home">
-            <svg
-              className="admin-shell__sidebar-logo"
-              viewBox="0 0 120 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              aria-hidden="true"
-            >
-              <text
-                x="0"
-                y="24"
-                fontFamily="Georgia, serif"
-                fontSize="24"
-                fontWeight="400"
-                letterSpacing="0.02em"
-                fill="currentColor"
-                style={{ opacity: 0.7 }}
-              >
-                VEIGIN
-              </text>
-            </svg>
+            <img
+              src="/brand/veiginlogo.png"
+              alt="VEIGIN Logo"
+              className="admin-shell__sidebar-logo h-8 w-auto"
+            />
           </Link>
         </div>
 
@@ -134,29 +83,6 @@ export default function AdminShell({
             <div className="admin-shell__nav-section-title">Main</div>
             {NAV_ITEMS.slice(0, 2).map((item) => {
               const isActive = getActiveHref(item.href);
-              if (item.disabled) {
-                return (
-                  <span
-                    key={item.href}
-                    className={`admin-shell__nav-item admin-shell__nav-item--disabled ${
-                      isActive ? "admin-shell__nav-item--active" : ""
-                    }`}
-                    aria-current={isActive ? "page" : undefined}
-                    aria-disabled="true"
-                  >
-                    <item.icon className="admin-shell__nav-icon" aria-hidden="true" />
-                    <span>{item.label}</span>
-                    {item.comingSoon && (
-                      <span
-                        className="ml-auto text-[10px] font-medium text-crimson-bright uppercase tracking-wider"
-                        style={{ color: "var(--admin-crimson)" }}
-                      >
-                        Soon
-                      </span>
-                    )}
-                  </span>
-                );
-              }
               return (
                 <Link
                   key={item.href}
@@ -168,54 +94,26 @@ export default function AdminShell({
                 >
                   <item.icon className="admin-shell__nav-icon" aria-hidden="true" />
                   <span>{item.label}</span>
-                  {item.comingSoon && (
-                    <span
-                      className="ml-auto text-[10px] font-medium text-crimson-bright uppercase tracking-wider"
-                      style={{ color: "var(--admin-crimson)" }}
-                    >
-                      Soon
-                    </span>
-                  )}
                 </Link>
               );
             })}
           </div>
 
           <div className="admin-shell__nav-section">
-            <div className="admin-shell__nav-section-title">Coming Soon</div>
+            <div className="admin-shell__nav-section-title">Management</div>
             {NAV_ITEMS.slice(2).map((item) => {
-              if (item.disabled) {
-                return (
-                  <span
-                    key={item.href}
-                    className="admin-shell__nav-item admin-shell__nav-item--disabled"
-                    aria-disabled="true"
-                  >
-                    <item.icon className="admin-shell__nav-icon" aria-hidden="true" />
-                    <span>{item.label}</span>
-                    <span
-                      className="ml-auto text-[10px] font-medium text-crimson-bright uppercase tracking-wider"
-                      style={{ color: "var(--admin-crimson)" }}
-                    >
-                      Soon
-                    </span>
-                  </span>
-                );
-              }
+              const isActive = getActiveHref(item.href);
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="admin-shell__nav-item"
+                  className={`admin-shell__nav-item ${
+                    isActive ? "admin-shell__nav-item--active" : ""
+                  }`}
+                  aria-current={isActive ? "page" : undefined}
                 >
                   <item.icon className="admin-shell__nav-icon" aria-hidden="true" />
                   <span>{item.label}</span>
-                  <span
-                    className="ml-auto text-[10px] font-medium text-crimson-bright uppercase tracking-wider"
-                    style={{ color: "var(--admin-crimson)" }}
-                  >
-                    Soon
-                  </span>
                 </Link>
               );
             })}

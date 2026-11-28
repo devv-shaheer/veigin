@@ -78,6 +78,7 @@ export async function verifySession(): Promise<{ adminId: number } | null> {
   const cookieStore = await cookies();
   const rawCookie = cookieStore.get(name)?.value ?? "";
 
+  console.log(`[verifySession] Looking for cookie: ${name}`);
   if (!rawCookie) return null;
 
   // Hash the cookie value and look it up

@@ -3,6 +3,8 @@ import { query } from "@/lib/db";
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import ProductFilters from "@/components/ProductFilters";
+import DeleteProductButton from "@/components/DeleteProductButton";
 
 export const dynamic = "force-dynamic";
 
@@ -98,19 +100,35 @@ async function updateProductAction(formData: FormData) {
     throw new Error("Invalid product details.");
   }
 
+  // Generate unique slug if name changed or no slug exists
+  let slug = formData.get("slug") as string | null;
+  if (!slug || slug === "") {
+    // Regenerate from name
+    let baseSlug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+    if (!baseSlug) baseSlug = "product";
+    let candidate = baseSlug;
+    let counter = 1;
+    for (;;) {
+      const existing = await query("SELECT id FROM products WHERE slug = ? AND id != ? LIMIT 1", [candidate, id]);
+      if (existing.length === 0) break;
+      candidate = `${baseSlug}-${counter++}`;
+    }
+    slug = candidate;
+  }
+
   const media = imageUrl
     ? JSON.stringify([{ url: imageUrl, alt: name, type: "image" }])
     : null;
 
   if (media) {
     await query(
-      `UPDATE products SET name = ?, description = ?, price = ?, stock = ?, category_id = ?, availability = ?, media = ? WHERE id = ?`,
-      [name, description, price, stock, categoryId, availability, media, id]
+      `UPDATE products SET name = ?, description = ?, slug = ?, price = ?, stock = ?, category_id = ?, availability = ?, media = ? WHERE id = ?`,
+      [name, description, slug, price, stock, categoryId, availability, media, id]
     );
   } else {
     await query(
-      `UPDATE products SET name = ?, description = ?, price = ?, stock = ?, category_id = ?, availability = ? WHERE id = ?`,
-      [name, description, price, stock, categoryId, availability, id]
+      `UPDATE products SET name = ?, description = ?, slug = ?, price = ?, stock = ?, category_id = ?, availability = ? WHERE id = ?`,
+      [name, description, slug, price, stock, categoryId, availability, id]
     );
   }
 
@@ -154,7 +172,7 @@ async function deleteProductAction(formData: FormData) {
 export default async function AdminProductsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; category?: string; success?: string; edit?: string; action?: string }>;
+  searchParams: Promise<{ q?: string; category?: string; stock?: string; status?: string; sort?: string; success?: string; edit?: string; action?: string }>;
 }) {
   const session = await verifySession();
   if (!session) redirect("/vg-7x2k");
@@ -162,6 +180,9 @@ export default async function AdminProductsPage({
   const params = await searchParams;
   const searchQuery = params.q || "";
   const categoryFilter = params.category || "";
+  const stockFilter = params.stock || "";
+  const statusFilter = params.status || "";
+  const sortBy = params.sort || "newest";
   const editId = params.edit ? parseInt(params.edit, 10) : null;
   const isCreating = params.action === "new";
 
@@ -171,7 +192,7 @@ export default async function AdminProductsPage({
   // Build products query
   let sql = `
     SELECT p.id, p.name, p.slug, p.price, p.stock, p.availability,
-           c.name AS category_name, c.id AS category_id, p.media, p.compare_at_price
+           c.name AS category_name, c.id AS category_id, p.media, p.compare_at_price, p.created_at
     FROM products p
     LEFT JOIN categories c ON c.id = p.category_id
     WHERE p.availability <> 'archived'
@@ -188,7 +209,34 @@ export default async function AdminProductsPage({
     queryParams.push(categoryFilter);
   }
 
-  sql += ` ORDER BY p.id DESC`;
+  // Stock filters
+  if (stockFilter === "low") {
+    sql += ` AND p.stock > 0 AND p.stock <= 5`;
+  } else if (stockFilter === "out") {
+    sql += ` AND p.stock = 0`;
+  } else if (stockFilter === "in") {
+    sql += ` AND p.stock > 5`;
+  }
+
+  // Status filters (is_active/is_hidden via availability and show_on_home)
+  if (statusFilter === "active") {
+    sql += ` AND p.availability = 'available' AND p.show_on_home = 1`;
+  } else if (statusFilter === "hidden") {
+    sql += ` AND (p.availability <> 'available' OR p.show_on_home = 0)`;
+  }
+
+  // Sorting
+  const sortMap: Record<string, string> = {
+    newest: "p.id DESC",
+    oldest: "p.id ASC",
+    name_asc: "p.name ASC",
+    name_desc: "p.name DESC",
+    price_asc: "p.price ASC",
+    price_desc: "p.price DESC",
+    stock_asc: "p.stock ASC",
+    stock_desc: "p.stock DESC",
+  };
+  sql += ` ORDER BY ${sortMap[sortBy] || sortMap.newest}`;
 
   const products = await query<ProductAdminRow>(sql, queryParams);
 
@@ -196,7 +244,7 @@ export default async function AdminProductsPage({
   let editProduct: ProductAdminRow | null = null;
   if (editId) {
     const editRows = await query<ProductAdminRow>(
-      `SELECT id, name, slug, price, stock, availability, category_id, media, compare_at_price FROM products WHERE id = ?`,
+      `SELECT id, name, slug, price, stock, availability, category_id, media, compare_at_price, description FROM products WHERE id = ?`,
       [editId]
     );
     editProduct = editRows[0] || null;
@@ -252,7 +300,10 @@ export default async function AdminProductsPage({
 
             <form action={isCreating ? createProductAction : updateProductAction} className="space-y-5">
               {!isCreating && editProduct && (
-                <input type="hidden" name="id" value={editProduct.id} />
+                <>
+                  <input type="hidden" name="id" value={editProduct.id} />
+                  <input type="hidden" name="slug" value={editProduct.slug} />
+                </>
               )}
 
               <div className="admin-shell__form-group">
@@ -318,6 +369,7 @@ export default async function AdminProductsPage({
                     <option value="available">Available</option>
                     <option value="sold_out">Sold Out</option>
                     <option value="exclusive">Exclusive</option>
+                    <option value="archived">Archived</option>
                   </select>
                 </div>
               </div>
@@ -349,6 +401,7 @@ export default async function AdminProductsPage({
                 <label className="admin-shell__label">Description</label>
                 <textarea
                   name="description"
+                  defaultValue={editProduct?.description || ""}
                   rows={3}
                   className="admin-shell__textarea"
                   placeholder="Product build details and gothic background..."
@@ -375,39 +428,14 @@ export default async function AdminProductsPage({
       )}
 
       {/* Filters and Search Bar */}
-      <div className="admin-shell__card mb-8 flex flex-col sm:flex-row gap-4 items-center justify-between">
-        <form method="GET" action="/admin/products" className="flex items-center gap-3 w-full sm:w-auto flex-1">
-          <input
-            type="text"
-            name="q"
-            defaultValue={searchQuery}
-            placeholder="Search products by name..."
-            className="admin-shell__input w-full sm:w-80"
-          />
-          {categoryFilter && <input type="hidden" name="category" value={categoryFilter} />}
-          <button type="submit" className="admin-shell__btn admin-shell__btn--secondary">
-            Search
-          </button>
-        </form>
-
-        <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-2 sm:pb-0">
-          <Link
-            href="/admin/products"
-            className={`admin-shell__btn admin-shell__btn--sm whitespace-nowrap ${!categoryFilter ? "admin-shell__btn--primary" : ""}`}
-          >
-            All Categories
-          </Link>
-          {categories.map((c) => (
-            <Link
-              key={c.id}
-              href={`/admin/products?category=${c.slug}${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ""}`}
-              className={`admin-shell__btn admin-shell__btn--sm whitespace-nowrap ${categoryFilter === c.slug ? "admin-shell__btn--primary" : ""}`}
-            >
-              {c.name}
-            </Link>
-          ))}
-        </div>
-      </div>
+      <ProductFilters
+        searchQuery={searchQuery}
+        categoryFilter={categoryFilter}
+        stockFilter={stockFilter}
+        statusFilter={statusFilter}
+        sortBy={sortBy}
+        categories={categories}
+      />
 
       {/* Products Table */}
       <div className="admin-shell__card overflow-hidden">
@@ -472,19 +500,12 @@ export default async function AdminProductsPage({
                         >
                           Edit
                         </Link>
-                        <form action={deleteProductAction} method="POST" className="inline">
+                        <form action={deleteProductAction} method="POST" className="inline" data-product-id={p.id}>
                           <input type="hidden" name="id" value={p.id} />
-                          <button
-                            type="submit"
-                            onClick={(e) => {
-                              if (!confirm(`Are you sure you want to remove or archive "${p.name}"?`)) {
-                                e.preventDefault();
-                              }
-                            }}
-                            className="text-sm font-medium hover:underline" style={{ color: "var(--admin-crimson)" }}
-                          >
-                            Delete
-                          </button>
+                          <DeleteProductButton
+                            productId={p.id}
+                            productName={p.name}
+                          />
                         </form>
                       </div>
                     </td>
@@ -498,3 +519,9 @@ export default async function AdminProductsPage({
     </div>
   );
 }
+import { fetchRecentProducts, fetchDashboardStats } from "@/lib/admin/dashboard";
+
+const [recentProducts, stats] = await Promise.all([
+  fetchRecentProducts(),
+  fetchDashboardStats(),
+]);

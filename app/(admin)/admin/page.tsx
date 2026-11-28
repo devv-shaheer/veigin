@@ -1,5 +1,6 @@
 import { verifySession } from "@/lib/admin-auth";
 import { query } from "@/lib/db";
+import { fetchRecentProducts, fetchDashboardStats } from "@/lib/admin/dashboard";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -14,36 +15,31 @@ export const metadata = {
 } as const;
 
 export default async function AdminPage() {
-  // Get the admin email from the session
   const session = await verifySession();
-  let adminEmail = "admin@veigin.pk";
+  if (!session) redirect("/admin/login");
 
-  // Fetch real metrics from database
-  const [productsResult, ordersResult, categoriesResult] = await Promise.all([
-    query<{ count: number }>("SELECT COUNT(*) as count FROM products WHERE availability <> 'archived'"),
-    query<{ count: number }>("SELECT COUNT(*) as count FROM orders"),
-    query<{ count: number }>("SELECT COUNT(*) as count FROM categories"),
+  let adminEmail = "N/A"; // Default or fallback if email isn't found
+  const users = await query<{ email: string }>(
+    "SELECT email FROM admin_users WHERE id = ? LIMIT 1",
+    [session.adminId]
+  );
+  if (users.length > 0) {
+    adminEmail = users[0].email;
+  }
+
+  const [recentProducts, stats] = await Promise.all([
+    fetchRecentProducts(),
+    fetchDashboardStats(),
   ]);
 
-  const totalProducts = productsResult[0]?.count ?? 0;
-  const totalOrders = ordersResult[0]?.count ?? 0;
+  const totalProducts = stats.products;
+  const totalOrders = stats.pendingOrders;
+
+  // Fetch categories count separately or include in fetchDashboardStats
+  const categoriesResult = await query<{ count: number }>("SELECT COUNT(*) as count FROM categories");
   const totalCategories = categoriesResult[0]?.count ?? 0;
 
-  // Fetch low stock products count
-  const lowStockResult = await query<{ count: number }>(
-    "SELECT COUNT(*) as count FROM products WHERE stock > 0 AND stock <= 5 AND availability <> 'archived'"
-  );
-  const lowStockCount = lowStockResult[0]?.count ?? 0;
-
-  if (session) {
-    const users = await query<{ email: string }>(
-      "SELECT email FROM admin_users WHERE id = ? LIMIT 1",
-      [session.adminId]
-    );
-    if (users.length > 0) {
-      adminEmail = users[0].email;
-    }
-  }
+  const lowStockCount = stats.lowStock;
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -74,7 +70,7 @@ export default async function AdminPage() {
           </div>
           <div className="admin-shell__stat">
             <div className="admin-shell__stat-label">Low Stock Items</div>
-            <div className="admin-shell__stat-value {lowStockCount > 0 ? '' : 'admin-shell__stat-value--placeholder'}">
+            <div className={`admin-shell__stat-value ${lowStockCount > 0 ? '' : 'admin-shell__stat-value--placeholder'}`}>
               {lowStockCount > 0 ? lowStockCount.toLocaleString() : '—'}
             </div>
           </div>
@@ -128,9 +124,43 @@ export default async function AdminPage() {
                 </tr>
               </thead>
               <tbody>
-                {/*
-                  Fetch recent products for display
-                */}
+                {recentProducts.map((p) => (
+                  <tr key={p.id}>
+                    <td>
+                      <div className="font-medium text-[var(--admin-text)]">{p.name}</div>
+                      <div className="text-xs font-mono" style={{ color: "var(--admin-text-muted)" }}>/ {p.slug}</div>
+                    </td>
+                    <td style={{ color: "var(--admin-text-muted)" }}>
+                      {p.category_name || <span className="italic">Unassigned</span>}
+                    </td>
+                    <td className="font-mono text-[var(--admin-text)]">PKR {p.price.toLocaleString()}</td>
+                    <td className="font-mono">
+                      <span className={p.stock === 0 ? "font-bold" : ""} style={{ color: p.stock === 0 ? "var(--admin-crimson)" : "var(--admin-text)" }}>
+                        {p.stock}
+                      </span>
+                    </td>
+                    <td>
+                      <span className={`admin-shell__badge ${
+                        p.stock === 0 || p.availability === "sold_out"
+                          ? "admin-shell__badge--danger"
+                          : p.availability === "exclusive"
+                          ? "admin-shell__badge--warning"
+                          : "admin-shell__badge--success"
+                      }`}
+                      >
+                        {p.stock === 0 ? "Sold Out" : p.availability}
+                      </span>
+                    </td>
+                    <td style={{ textAlign: 'right' }}>
+                      <Link
+                        href={`/admin/products?edit=${p.id}`}
+                        className="text-sm font-medium hover:underline" style={{ color: "var(--admin-text-muted)" }}
+                      >
+                        Edit
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

@@ -112,7 +112,7 @@ export async function getAllProducts(filters: ProductFilters = {}): Promise<Prod
       "p.drop_id, p.stock, p.availability, p.material, p.length_label, " +
       "p.build_details, p.media, p.is_best_seller, p.is_new_drop, p.is_exclusive " +
       "FROM products p LEFT JOIN categories c ON c.id = p.category_id " +
-      "WHERE p.availability <> 'archived'";
+      "WHERE p.availability = 'available'";
 
     if (filters.categorySlug) {
       sql += " AND c.slug = ?";
