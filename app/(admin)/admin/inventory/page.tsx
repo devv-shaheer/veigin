@@ -3,6 +3,7 @@ import { query } from "@/lib/db";
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { LOGIN_PATH } from "@/lib/admin-paths";
 
 export const dynamic = "force-dynamic";
 
@@ -102,7 +103,7 @@ export default async function AdminInventoryPage({
   searchParams: Promise<{ q?: string; category?: string; stock?: string; success?: string }>;
 }) {
   const session = await verifySession();
-  if (!session) redirect("/vg-7x2k");
+  if (!session) redirect(LOGIN_PATH);
 
   const params = await searchParams;
   const searchQuery = params.q || "";

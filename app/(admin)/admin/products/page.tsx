@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import ProductFilters from "@/components/ProductFilters";
 import DeleteProductButton from "@/components/DeleteProductButton";
+import { LOGIN_PATH } from "@/lib/admin-paths";
 
 export const dynamic = "force-dynamic";
 
@@ -175,7 +176,7 @@ export default async function AdminProductsPage({
   searchParams: Promise<{ q?: string; category?: string; stock?: string; status?: string; sort?: string; success?: string; edit?: string; action?: string }>;
 }) {
   const session = await verifySession();
-  if (!session) redirect("/vg-7x2k");
+  if (!session) redirect(LOGIN_PATH);
 
   const params = await searchParams;
   const searchQuery = params.q || "";

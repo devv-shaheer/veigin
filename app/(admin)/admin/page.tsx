@@ -1,7 +1,9 @@
 import { verifySession } from "@/lib/admin-auth";
 import { query } from "@/lib/db";
 import { fetchRecentProducts, fetchDashboardStats } from "@/lib/admin/dashboard";
+import { redirect } from "next/navigation";
 import Link from "next/link";
+import { LOGIN_PATH } from "@/lib/admin-paths";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +18,7 @@ export const metadata = {
 
 export default async function AdminPage() {
   const session = await verifySession();
-  if (!session) redirect("/admin/login");
+  if (!session) redirect(LOGIN_PATH);
 
   let adminEmail = "N/A"; // Default or fallback if email isn't found
   const users = await query<{ email: string }>(
