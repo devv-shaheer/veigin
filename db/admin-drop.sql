@@ -6,6 +6,7 @@ USE `veigin`;
 
 SET FOREIGN_KEY_CHECKS = 0;
 
+DROP TABLE IF EXISTS `stock_audit`;
 DROP TABLE IF EXISTS `admin_sessions`;
 DROP TABLE IF EXISTS `admin_login_attempts`;
 DROP TABLE IF EXISTS `admin_users`;

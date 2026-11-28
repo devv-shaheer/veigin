@@ -26,6 +26,7 @@ type ProductAdminRow = {
   category_id: number | null;
   media: string | null;
   compare_at_price: number | null;
+  description: string | null;
 };
 
 type CategoryRow = {

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { LOGIN_PATH } from "@/lib/admin-paths";
+import { AdjustStockProvider, useAdjustStock } from "@/components/AdjustStockModal";
 
 export const dynamic = "force-dynamic";
 
@@ -97,19 +98,15 @@ async function setAvailabilityAction(formData: FormData) {
   redirect("/admin/inventory?success=availability");
 }
 
-export default async function AdminInventoryPage({
-  searchParams,
+async function fetchInventoryData({
+  searchQuery,
+  categoryFilter,
+  stockFilter,
 }: {
-  searchParams: Promise<{ q?: string; category?: string; stock?: string; success?: string }>;
+  searchQuery: string;
+  categoryFilter: string;
+  stockFilter: string;
 }) {
-  const session = await verifySession();
-  if (!session) redirect(LOGIN_PATH);
-
-  const params = await searchParams;
-  const searchQuery = params.q || "";
-  const categoryFilter = params.category || "";
-  const stockFilter = params.stock || "";
-
   // Fetch categories
   const categories = await query<CategoryRow>("SELECT id, name, slug FROM categories ORDER BY sort_order, name");
 
@@ -157,6 +154,74 @@ export default async function AdminInventoryPage({
   const lowStockCount = lowStockResult[0]?.count ?? 0;
   const outOfStockCount = outOfStockResult[0]?.count ?? 0;
 
+  return {
+    categories,
+    inventory,
+    totalProducts,
+    lowStockCount,
+    outOfStockCount,
+  };
+}
+
+export default async function AdminInventoryPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; category?: string; stock?: string; success?: string }>;
+}) {
+  const session = await verifySession();
+  if (!session) redirect(LOGIN_PATH);
+
+  const params = await searchParams;
+  const searchQuery = params.q || "";
+  const categoryFilter = params.category || "";
+  const stockFilter = params.stock || "";
+
+  const { categories, inventory, totalProducts, lowStockCount, outOfStockCount } = await fetchInventoryData({
+    searchQuery,
+    categoryFilter,
+    stockFilter,
+  });
+
+  return (
+    <AdjustStockProvider inventory={inventory}>
+      <AdminInventoryPageContent
+        searchQuery={searchQuery}
+        categoryFilter={categoryFilter}
+        stockFilter={stockFilter}
+        success={params.success}
+        categories={categories}
+        inventory={inventory}
+        totalProducts={totalProducts}
+        lowStockCount={lowStockCount}
+        outOfStockCount={outOfStockCount}
+      />
+    </AdjustStockProvider>
+  );
+}
+
+function AdminInventoryPageContent({
+  searchQuery,
+  categoryFilter,
+  stockFilter,
+  success,
+  categories,
+  inventory,
+  totalProducts,
+  lowStockCount,
+  outOfStockCount,
+}: {
+  searchQuery: string;
+  categoryFilter: string;
+  stockFilter: string;
+  success?: string;
+  categories: CategoryRow[];
+  inventory: InventoryRow[];
+  totalProducts: number;
+  lowStockCount: number;
+  outOfStockCount: number;
+}) {
+  const { openAdjustModal } = useAdjustStock();
+
   return (
     <div className="max-w-7xl mx-auto">
       {/* Header */}
@@ -175,11 +240,11 @@ export default async function AdminInventoryPage({
       </div>
 
       {/* Success Banner */}
-      {params.success && (
+      {success && (
         <div className="mb-6 admin-shell__card" style={{ backgroundColor: "var(--admin-emerald-subtle)", borderColor: "var(--admin-emerald-border)" }}>
           <span className="font-medium" style={{ color: "var(--admin-emerald)" }}>
-            {params.success === "adjusted" && "Stock successfully adjusted."}
-            {params.success === "availability" && "Availability successfully updated."}
+            {success === "adjusted" && "Stock successfully adjusted."}
+            {success === "availability" && "Availability successfully updated."}
           </span>
           <Link href="/admin/inventory" className="text-xs hover:underline" style={{ color: "var(--admin-emerald)" }}>Dismiss</Link>
         </div>
@@ -373,9 +438,6 @@ export default async function AdminInventoryPage({
           </table>
         </div>
       </div>
-
-      {/* Adjust Stock Modal */}
-      <AdjustStockModal inventory={inventory} />
     </div>
   );
 }

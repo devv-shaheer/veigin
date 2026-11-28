@@ -5,13 +5,11 @@ import { useState } from "react";
 interface DeleteProductButtonProps {
   productId: number;
   productName: string;
-  formAction: string;
 }
 
 export default function DeleteProductButton({
   productId,
   productName,
-  formAction,
 }: DeleteProductButtonProps) {
   const [confirming, setConfirming] = useState(false);
 
@@ -19,13 +17,13 @@ export default function DeleteProductButton({
     return (
       <div className="flex items-center gap-2">
         <span className="text-xs font-medium" style={{ color: "var(--admin-crimson)" }}>
-          Delete "{productName}"?
+          Delete &ldquo;{productName}&rdquo;?
         </span>
         <button
           type="button"
           onClick={() => {
             // Submit the hidden form
-            const form = document.querySelector(`form[data-product-id="${productId}"]`);
+            const form = document.querySelector<HTMLFormElement>(`form[data-product-id="${productId}"]`);
             if (form) {
               form.requestSubmit();
             }
