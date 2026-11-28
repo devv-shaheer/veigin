@@ -72,7 +72,7 @@ export default function BackgroundLights() {
       aria-hidden="true"
       style={{
       position: "absolute",
-inset: 0,
+inset: 0,               
 zIndex: 0,
         pointerEvents: "none",
         overflow: "hidden",

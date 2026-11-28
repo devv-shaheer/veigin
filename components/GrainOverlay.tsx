@@ -33,7 +33,7 @@ export default function GrainOverlay() {
           ...layer,
           backgroundImage: DIRT,
           backgroundSize: "1024px 1024px",
-          opacity: 0.3,
+          opacity: 0.5,
         }}
       />
       <div
@@ -42,7 +42,7 @@ export default function GrainOverlay() {
           ...layer,
           backgroundImage: FINE,
           backgroundSize: "256px 256px",
-          opacity: 0.62,
+          opacity: 0.55,
         }}
       />
     </>
