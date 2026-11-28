@@ -1,0 +1,1 @@
+admin-11a-scoping - inspect only: read docs, schema, routes, product reads, packages; listed findings in plain lists; proposed admin stage order A→F; reported all findings and exact commands needed. no code written or changed beyond the three scripts and two SQL files required for Stage 11A. progress.md updated with Stage 10 record.

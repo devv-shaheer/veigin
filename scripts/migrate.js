@@ -74,19 +74,28 @@ async function run(command) {
     if (command === "up") {
       await conn.query(readSql("schema.sql"));
       const added = await ensureHomeColumns(conn);
+      await conn.query(readSql("admin.sql"));
       console.log(
         "db:up - schema applied" + (added ? ` (${added} column(s) added)` : ""),
       );
     } else if (command === "down") {
+      await conn.query(readSql("admin-drop.sql"));
       await conn.query(readSql("drop.sql"));
       console.log("db:down - schema dropped");
     } else if (command === "reset") {
+      await conn.query(readSql("admin-drop.sql"));
       await conn.query(readSql("drop.sql"));
       await conn.query(readSql("schema.sql"));
       await ensureHomeColumns(conn);
+      await conn.query(readSql("admin.sql"));
       console.log("db:reset - schema dropped and reapplied");
+    } else if (command === "admin-down") {
+      await conn.query(readSql("admin-drop.sql"));
+      console.log("db:admin-down - admin tables dropped");
     } else {
-      throw new Error(`Unknown command "${command}". Use: up | down | reset`);
+      throw new Error(
+        `Unknown command "${command}". Use: up | down | reset | admin-down`,
+      );
     }
   } finally {
     await conn.end();

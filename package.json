@@ -12,6 +12,7 @@
     "db:down": "node scripts/migrate.js down",
     "db:seed": "node scripts/seed.js",
     "db:reset": "node scripts/migrate.js reset",
+    "admin:create": "node scripts/create-admin.js",
     "test:scatter": "node scripts/test-scatter.js"
   },
   "dependencies": {

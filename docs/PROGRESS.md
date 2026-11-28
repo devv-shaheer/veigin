@@ -54,3 +54,12 @@
 - `npm run test:scatter` - pass (8 cards, all geometry checks).
 - Responsive layout verified at 390px / 1024px / 1920px (`grid lg:grid-cols-2`, field full-width on mobile).
 - No commits made. No changes to Stage 2 header/nav/logo/footer. `orderflow` DB untouched. No ORM installed.
+
+## Stage 10 - Admin panel scoping (inspect only, no code written)
+- Goal: scope the admin panel. No code changed; this stage is documentation only.
+- Docs: `docs/PROGRESS.md` only. No SRS/spec file. Nothing describes the admin panel yet (no features, roles, order or product management documented).
+- Schema (`db/schema.sql`, applied via `scripts/migrate.js`): tables `settings`, `categories`, `drops`, `products`, `discount_codes`, `orders`, `order_items`. No `admins`/`users` table exists. An `orders` table exists (full checkout model: `payment_status`, `order_status`, `tracking_id`, `rejection_reason`, `discount_code_id` FK, plus `order_items`).
+- Routes: no `app/admin/` anywhere; no login/auth page; no `middleware.ts` or `proxy.ts`; no session/cookie/jwt code. Only API route is `app/api/orders/route.ts` (POST, creates order + items in a transaction). `app/dev` has only the temporary `app/dev/fonts/page.tsx` font-test page.
+- Product reads: `lib/products.ts` (`getAllProducts`, `getProductBySlug`, `searchProducts`, `getHomeProducts`), `lib/settings.ts` (`getSettings`), `app/api/orders/route.ts` (POST verifies products). All via `query<T>`/`withTransaction` in `lib/db.ts` (mysql2/promise). No ORM. Storefront read helpers swallow errors and return `[]`/`null`, which would hide failures from an admin UI.
+- Installed helpers: `bcryptjs` (+types), `zod`, `react-hook-form`, `@hookform/resolvers`, `mysql2`. No auth library (next-auth/better-auth/jose), no UI kit, no upload library, no data-grid.
+- Proposed admin stage order (smallest first): A) schema+migration (admins table) -> B) auth core (login, session, proxy) -> C) admin layout+dashboard -> D) products management (add a write path - none exists) -> E) orders management -> F) discounts+settings.
