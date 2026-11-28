@@ -1,13 +1,6 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { Poppins, Anton, IBM_Plex_Mono } from "next/font/google";
 import localFont from "next/font/local";
-import GrainOverlay from "@/components/GrainOverlay";
-import BackgroundLights from "@/components/BackgroundLights";
-import PromoBar, { PromoBarFallback } from "@/components/PromoBar";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import { CartProvider } from "@/components/CartProvider";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -30,11 +23,12 @@ const plexMono = IBM_Plex_Mono({
   display: "swap",
   variable: "--font-plex-mono",
 });
+
 const xizor = localFont({
   src: "./fonts/ShadowofXizor.woff2",
   variable: "--font-xizor",
   display: "swap",
-}); 
+});
 
 export const metadata: Metadata = {
   title: {
@@ -58,18 +52,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full antialiased isolate">
-        <CartProvider>
-          <GrainOverlay />
-          <BackgroundLights />
-          <div className="relative z-10 flex min-h-screen flex-col">
-            <Suspense fallback={<PromoBarFallback />}>
-              <PromoBar />
-            </Suspense>
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
-        </CartProvider>
+        {children}
       </body>
     </html>
   );

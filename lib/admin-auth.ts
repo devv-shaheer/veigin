@@ -82,7 +82,7 @@ export async function verifySession(): Promise<{ adminId: number } | null> {
 
   // Hash the cookie value and look it up
   const crypto = require("crypto");
-  const tokenBuf = Buffer.from(rawCookie, "utf8");
+  const tokenBuf = Buffer.from(rawCookie, "hex");
   const hashed = createHash("sha256").update(tokenBuf).digest("hex");
 
   const row = await findSession(hashed);
