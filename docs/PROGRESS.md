@@ -85,3 +85,36 @@
 - **AdjustStockModal** (`components/AdjustStockModal.tsx`): React Context provider pattern (`AdjustStockProvider` wraps page content, `useAdjustStock` hook opens modal with selected product), form validates adjustment won't make stock negative, reason field, Server Action `adjustStockAction` updates product + `stock_audit` in transaction.
 - **DeleteProductButton** (`components/DeleteProductButton.tsx`): confirm-then-submit pattern, accessible (focus management, keyboard support), no unused props.
 - Verification: `npm run typecheck` pass, `npm run lint` pass (warnings only for Next.js navigation patterns and `<img>` elements - pre-existing), `npm run build` pass (Next.js 16.4.6, Turbopack). All 8 admin pages functional with real DB-backed data, no fake metrics or placeholder controls.
+
+## Stage 2 (Checkout & Order Safety) - Completed
+- **Transactional Checkout** (`app/api/orders/route.ts`): All checkout operations wrapped in `withTransaction()` from `lib/db.ts`.
+- **Row Locking**: Added `FOR UPDATE` to product SELECT query to prevent race conditions.
+- **Server-side Price Calculation**: Prices and totals calculated server-side using verified database values (not client-submitted prices).
+- **Stock Validation**: Stock checked server-side before order creation; quantity capped at available stock.
+- **Atomic Stock Deduction**: Stock decremented within the same transaction as order creation.
+- **Stock Audit Logging**: Each stock deduction creates an entry in `stock_audit` with `change_type = 'order'`, linking to the order via `reference_id`.
+- **Rollback on Failure**: Transaction rolls back all changes if any step fails.
+- **Concurrency Test** (`scripts/test-concurrency.js`): Repeatable test proving two simultaneous checkout requests cannot both purchase the last unit.
+  - Test creates product with stock = 1
+  - Runs two concurrent checkout requests
+  - Verifies only one order succeeds, stock reaches 0
+  - Result: ✅ PASSED
+- **Files Changed**:
+  - `app/api/orders/route.ts` - Added `FOR UPDATE`, stock deduction, audit logging
+  - `app/(admin)/admin/inventory/actions.ts` - Added stock_audit insert for manual adjustments
+  - `scripts/test-concurrency.js` - New concurrency test script
+- **Verification**:
+  - `npm run typecheck` - PASS
+  - `npm run lint` - PASS (14 pre-existing warnings only)
+  - `npm run build` - PASS
+  - Concurrency test - PASS
+- **Products** (`app/(admin)/admin/products/page.tsx`): full CRUD with modal create/edit forms (Zod + react-hook-form), image URL field, category/drop select, stock/availability/restockable toggles, compare-at-price, featured flag, search/filter/pagination (20/page), soft-delete (archive) with confirmation modal (`DeleteProductButton.tsx`).
+- **Inventory** (`app/(admin)/admin/inventory/page.tsx`): stock-focused table with Adjust Stock modal (React Context pattern via `AdjustStockProvider`/`useAdjustStock` hook, Server Action `adjustStockAction` logs to `stock_audit`), availability dropdown per row, category pill filter bar, stock status filter (In Stock/Low/Out), summary stat cards (total/in-stock/low/out), search + pagination.
+- **Orders** (`app/(admin)/admin/orders/page.tsx`): searchable/filterable order list (by order #, name, email, phone; payment status + order status dropdowns), click-to-expand detail modal with full order info (items, totals, shipping), valid status transitions enforced server-side (`VALID_STATUS_TRANSITIONS`, `PAYMENT_STATUS_TRANSITIONS`), tracking ID entry auto-sets order_status to `dispatched`, payment proof URL + Easypaisa transaction ID fields, cancellation restores stock + audit log, pagination.
+- **Customers** (`app/(admin)/admin/customers/page.tsx`): searchable directory (email, name, phone, city), filter by has-orders/guest, detail modal with contact info, addresses extracted from orders (most recent = default), order history table with status badges, pagination.
+- **Discounts** (`app/(admin)/admin/discounts/page.tsx`): CRUD for discount codes (percentage/fixed, value, usage limit, min order, active dates, active toggle), validation prevents overlap of active percentage codes, used_count display, delete only allowed when `used_count === 0`, search + pagination, success banners.
+- **Storefront** (`app/(admin)/admin/storefront/page.tsx`): announcement banner editor (text + active toggle, persisted to `settings`), featured products grid (multi-select from available products, drag-to-reorder via up/down buttons, stored as JSON array in `settings.featured_product_ids`).
+- **Settings** (`app/(admin)/admin/settings/page.tsx`): site config (name, tagline, currency, contact email/phone, address), SEO defaults (meta title/description, OG image), maintenance mode toggle, all persisted to `settings` table (single row, upsert).
+- **AdjustStockModal** (`components/AdjustStockModal.tsx`): React Context provider pattern (`AdjustStockProvider` wraps page content, `useAdjustStock` hook opens modal with selected product), form validates adjustment won't make stock negative, reason field, Server Action `adjustStockAction` updates product + `stock_audit` in transaction.
+- **DeleteProductButton** (`components/DeleteProductButton.tsx`): confirm-then-submit pattern, accessible (focus management, keyboard support), no unused props.
+- Verification: `npm run typecheck` pass, `npm run lint` pass (warnings only for Next.js navigation patterns and `<img>` elements - pre-existing), `npm run build` pass (Next.js 16.4.6, Turbopack). All 8 admin pages functional with real DB-backed data, no fake metrics or placeholder controls.

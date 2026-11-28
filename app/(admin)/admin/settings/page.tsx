@@ -211,7 +211,7 @@ export default async function AdminSettingsPage({
                 </div>
               </header>
 
-              <form action={updateSettingsAction} method="POST" className="space-y-5">
+              <form action={updateSettingsAction} className="space-y-5">
                 <input type="hidden" name="section" value={sectionKey} />
                 {renderSettingsFields(sectionKey, settings[sectionKey as keyof SettingsGroup])}
                 <div className="pt-4 border-t flex justify-end" style={{ borderColor: "var(--admin-border)" }}>

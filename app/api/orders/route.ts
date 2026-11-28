@@ -46,11 +46,11 @@ export async function POST(request: Request) {
 
   try {
     const result = await withTransaction(async (conn: PoolConnection) => {
-      // Re-verify every product from the database (stock + price).
+      // Re-verify every product from the database with row lock (stock + price).
       const ids = items.map((i) => i.productId);
       const placeholders = ids.map(() => "?").join(",");
       const [rows] = await conn.query<ProductRow[]>(
-        `SELECT id, name, price, stock, availability FROM products WHERE id IN (${placeholders})`,
+        `SELECT id, name, price, stock, availability FROM products WHERE id IN (${placeholders}) FOR UPDATE`,
         ids,
       );
       const byId = new Map<number, ProductRow>();
@@ -96,6 +96,27 @@ export async function POST(request: Request) {
         await conn.execute(
           "INSERT INTO order_items (order_id, product_id, product_name, unit_price, quantity) VALUES (?, ?, ?, ?, ?)",
           [orderId, item.productId, item.name, item.price, item.quantity],
+        );
+
+        // Deduct stock atomically
+        const [productBefore] = await conn.query<ProductRow[]>(
+          "SELECT stock FROM products WHERE id = ? FOR UPDATE",
+          [item.productId]
+        );
+        const oldStock = productBefore[0]?.stock ?? 0;
+        const newStock = Math.max(0, oldStock - item.quantity);
+        const newAvailability = newStock === 0 ? "sold_out" : "available";
+
+        await conn.execute(
+          "UPDATE products SET stock = ?, availability = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+          [newStock, newAvailability, item.productId]
+        );
+
+        // Log stock change to audit
+        await conn.execute(
+          `INSERT INTO stock_audit (product_id, admin_user_id, change_type, old_stock, new_stock, adjustment, reason, reference_type, reference_id)
+           VALUES (?, NULL, 'order', ?, ?, ?, 'Order placed', 'order', ?)`,
+          [item.productId, oldStock, newStock, -item.quantity, orderId]
         );
       }
 

@@ -26,12 +26,19 @@ export async function adjustStockAction(formData: FormData) {
     throw new Error("Product not found or archived.");
   }
 
-  const newStock = Math.max(0, product[0].stock + adjustment);
+  const oldStock = product[0].stock;
+  const newStock = Math.max(0, oldStock + adjustment);
   const newAvailability = newStock === 0 ? "sold_out" : "available";
 
   await query(
     `UPDATE products SET stock = ?, availability = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
     [newStock, newAvailability, id]
+  );
+
+  await query(
+    `INSERT INTO stock_audit (product_id, admin_user_id, change_type, old_stock, new_stock, adjustment, reason, reference_type, reference_id)
+     VALUES (?, ?, 'adjustment', ?, ?, ?, ?, 'manual', NULL)`,
+    [id, session.adminId, oldStock, newStock, adjustment, reason]
   );
 
   revalidatePath("/admin/inventory");

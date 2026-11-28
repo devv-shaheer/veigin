@@ -30,7 +30,7 @@ type FeaturedProduct = {
   price: number;
   stock: number;
   availability: string;
-  image_url: string | null;
+  media: string | null;
 };
 
 // Server Actions
@@ -137,19 +137,33 @@ async function getFeaturedProductIds(): Promise<number[]> {
   }
 }
 
+function firstImageUrl(media: string | null): string | null {
+  if (!media) return null;
+  try {
+    const parsed = JSON.parse(media);
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      return parsed[0]?.url ?? null;
+    }
+  } catch {
+    return null;
+  }
+  return null;
+}
+
 async function getAvailableProducts(): Promise<FeaturedProduct[]> {
   return query<FeaturedProduct>(
-    `SELECT id, name, slug, price, stock, availability, image_url
+    `SELECT id, name, slug, price, stock, availability, media
      FROM products
      WHERE availability = 'available' AND stock > 0
      ORDER BY name`
   );
 }
 
-export default async function AdminStorefrontPage() {
+export default async function AdminStorefrontPage({ searchParams }: { searchParams: Promise<{ success?: string }> }) {
   const session = await verifySession();
   if (!session) redirect(LOGIN_PATH);
 
+  const params = await searchParams;
   const [announcement, featuredIds, availableProducts] = await Promise.all([
     getAnnouncementSettings(),
     getFeaturedProductIds(),
@@ -174,11 +188,10 @@ export default async function AdminStorefrontPage() {
       </div>
 
       {/* Success Banner */}
-      {(new URLSearchParams(window.location.search).get("success") === "announcement" ||
-        new URLSearchParams(window.location.search).get("success") === "featured") && (
+      {(params.success === "announcement" || params.success === "featured") && (
         <div className="mb-6 admin-shell__card" style={{ backgroundColor: "var(--admin-emerald-subtle)", borderColor: "var(--admin-emerald-border)" }}>
           <span className="font-medium" style={{ color: "var(--admin-emerald)" }}>
-            {new URLSearchParams(window.location.search).get("success") === "announcement" ? "Announcement banner updated successfully." : "Featured products updated successfully."}
+            {params.success === "announcement" ? "Announcement banner updated successfully." : "Featured products updated successfully."}
           </span>
           <Link href="/admin/storefront" className="text-xs hover:underline" style={{ color: "var(--admin-emerald)" }}>Dismiss</Link>
         </div>
@@ -192,7 +205,7 @@ export default async function AdminStorefrontPage() {
             Display a persistent banner at the top of the storefront. Use for promotions, shipping notices, or important updates.
           </p>
 
-          <form action={updateAnnouncementAction} method="POST" className="space-y-5">
+          <form action={updateAnnouncementAction} className="space-y-5">
             <div>
               <label className="admin-shell__label flex items-center gap-3">
                 <input
@@ -314,7 +327,7 @@ export default async function AdminStorefrontPage() {
             Select up to 8 products to display on the homepage. These appear in the &apos;Featured&apos; section.
           </p>
 
-          <form action={updateFeaturedProductsAction} method="POST" className="space-y-5">
+          <form action={updateFeaturedProductsAction} className="space-y-5">
             <div className="space-y-3 max-h-96 overflow-y-auto">
               {availableProducts.length === 0 ? (
                 <p className="text-sm italic" style={{ color: "var(--admin-text-muted)" }}>
@@ -323,6 +336,7 @@ export default async function AdminStorefrontPage() {
               ) : (
                 availableProducts.map((product) => {
                   const isFeatured = featuredIds.includes(product.id);
+                  const imageUrl = firstImageUrl(product.media);
                   return (
                     <label key={product.id} className="flex items-center gap-4 p-3 rounded transition-colors cursor-pointer" style={{
                       backgroundColor: isFeatured ? "var(--admin-crimson-subtle)" : "transparent",
@@ -337,9 +351,9 @@ export default async function AdminStorefrontPage() {
                         defaultChecked={isFeatured}
                         className="admin-shell__checkbox"
                       />
-                      {product.image_url && (
+                      {firstImageUrl(product.media) && (
                         <img
-                          src={product.image_url}
+                          src={firstImageUrl(product.media)!}
                           alt=""
                           className="w-12 h-12 object-cover rounded"
                           style={{ backgroundColor: "var(--admin-bg)" }}

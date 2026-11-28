@@ -521,9 +521,3 @@ export default async function AdminProductsPage({
     </div>
   );
 }
-import { fetchRecentProducts, fetchDashboardStats } from "@/lib/admin/dashboard";
-
-const [recentProducts, stats] = await Promise.all([
-  fetchRecentProducts(),
-  fetchDashboardStats(),
-]);
