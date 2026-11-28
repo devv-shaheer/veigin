@@ -1,10 +1,11 @@
-export default function Logo() {
+export default function Logo({ className, priority }: { className?: string; priority?: boolean }) {
   return (
     <img
       src="/brand/veiginlogo.png"
       alt="VEIGIN"
-      className="h-10 md:h-9.5 w-auto object-contain brightness-0 invert"
+      className={`object-contain brightness-0 invert ${className}`}
       draggable={false}
+      {...(priority ? { fetchPriority: "high" } : {})}
     />
   );
 }
